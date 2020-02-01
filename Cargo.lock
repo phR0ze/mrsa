@@ -23,7 +23,7 @@ dependencies = [
 
 [[package]]
 name = "ars"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
