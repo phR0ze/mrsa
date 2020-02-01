@@ -1,0 +1,25 @@
+[package]
+name = "ars"
+version = "0.0.2"
+edition = "2018"
+authors = ["phR0ze"]
+license = "MIT OR Apache-2.0"
+description = "Arch Linux build and package automation"
+readme = "README.md"
+homepage = "https://github.com/phR0ze/ars"
+repository = "https://github.com/phR0ze/ars"
+
+[profile.release]
+lto = true
+
+[dependencies]
+failure = "0.1"
+failure_derive = "0.1"
+serde_yaml = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+clap = { version = "2.33", features = ["suggestions"] }
+fungus = { features = ["_arch_", "_net_", "_libc_", "_crypto_"] }
+
+[patch.crates-io]
+fungus = { path = "../fungus" }
+git2 = { git = "https://github.com/phR0ze/git2-rs", branch = "master" }
