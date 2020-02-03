@@ -8,6 +8,8 @@ use crate::model::*;
 pub const APP_NAME: &'static str = "mrsa";
 pub const APP_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 pub const APP_DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
+pub const APP_GIT_COMMIT: &'static str = env!("APP_GIT_COMMIT");
+pub const APP_BUILD_DATE: &'static str = env!("APP_BUILD_DATE");
 
 // Mrsa implementation
 // -------------------------------------------------------------------------------------------------

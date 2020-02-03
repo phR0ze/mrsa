@@ -113,8 +113,8 @@ Examples:
             println!("MRSA CLI - {}", APP_DESCRIPTION);
             println!("{:->w$}", "-", w = 60);
             println!("{:<w$} {}", "Version:", APP_VERSION, w = 18);
-            println!("{:<w$} {}", "Build Date:", APP_VERSION, w = 18);
-            println!("{:<w$} {}", "Git Commit:", APP_VERSION, w = 18);
+            println!("{:<w$} {}", "Build Date:", APP_BUILD_DATE, w = 18);
+            println!("{:<w$} {}", "Git Commit:", APP_GIT_COMMIT, w = 18);
         }
 
         // Execute use command before initializing mrsa to to update config first
