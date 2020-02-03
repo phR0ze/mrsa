@@ -1,23 +1,23 @@
-//! `mrsa` is ?
+//! `mrsa` provides Arch Linux build and package automation
 //!
 //! ## About
 //!
-//! `mrsa` is ?
+//! `mrsa` provide Arch Linux build and package automation
 use clap::{App, AppSettings, Arg, SubCommand};
 use fungus::prelude::*;
 use mrsa::*;
 use std::ffi::OsString;
 
-/// CLI provides an abstraction layer for testing the cyberlinux cli
+/// CLI provides an abstraction layer for testing the cli
 #[derive(Debug, PartialEq)]
 struct CLI {}
 impl CLI {
-    /// Create a new instance of the cyberlinux cli with the command line arguments
+    /// Create a new instance of the cli with the command line arguments
     pub fn new() -> Result<Self> {
         Self::new_from(std::env::args_os().into_iter())
     }
 
-    /// Create a new instance of the cyberlinux cli with the given arguments
+    /// Create a new instance of the cli with the given arguments
     fn new_from<T, U>(args: T) -> Result<Self>
     where
         T: Iterator<Item = U>,
@@ -43,6 +43,7 @@ Examples:
             .version(&format!("v{}", APP_VERSION)[..])
             .about(APP_DESCRIPTION)
             .setting(AppSettings::SubcommandRequiredElseHelp)
+
             // Global arguments
             // -----------------------------------------------------------------------------------------
             .arg(Arg::with_name("test").short("t").long("test").help("Enable test mode"))
@@ -60,6 +61,10 @@ Examples:
             // data-dir - is where all repos are downloaded and all work is done
             .arg(Arg::with_name("data_dir").long("data-dir").value_name("PATH").takes_value(true)
                 .help("Sets the data directory [default: $XDG_DATA_HOME/mrsa]"))
+
+            // Version command
+            // -----------------------------------------------------------------------------------------
+            .subcommand(SubCommand::with_name("version").alias("v").alias("ver").about("Print version information"))
 
             // Use command
             // -----------------------------------------------------------------------------------------
@@ -102,6 +107,16 @@ Examples:
             mrsa.test(matches.value_of("test").unwrap().to_lowercase().parse()?);
         }
 
+        // Execute version
+        // ---------------------------------------------------------------------------------------------
+        if let Some(ref _matches) = matches.subcommand_matches("version") {
+            println!("MRSA CLI - {}", APP_DESCRIPTION);
+            println!("{:->w$}", "-", w = 60);
+            println!("{:<w$} {}", "Version:", APP_VERSION, w = 18);
+            println!("{:<w$} {}", "Build Date:", APP_VERSION, w = 18);
+            println!("{:<w$} {}", "Git Commit:", APP_VERSION, w = 18);
+        }
+
         // Execute use command before initializing mrsa to to update config first
         // ---------------------------------------------------------------------------------------------
         if let Some(ref _matches) = matches.subcommand_matches("use") {
@@ -115,12 +130,9 @@ Examples:
             mrsa.init()?;
             let mut components = Vec::new();
             match matches.subcommand() {
-                // Remove config
-                // -------------------------------------------------------------------------------------
                 ("config", Some(_)) => {
                     components.push(Component::Config);
                 }
-
                 _ => unreachable!(),
             }
 

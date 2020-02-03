@@ -7,3 +7,8 @@ repositories.
 
 ## Backlog
 * pacman database access
+    * Search for a package with the given name
+    * Get the package's version
+* rank mirrors
+
+## Changelog
