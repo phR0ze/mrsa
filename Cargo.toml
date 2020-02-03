@@ -1,13 +1,13 @@
 [package]
-name = "ars"
-version = "0.0.3"
+name = "mrsa"
+version = "0.0.4"
 edition = "2018"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
 description = "Arch Linux build and package automation"
 readme = "README.md"
-homepage = "https://github.com/phR0ze/ars"
-repository = "https://github.com/phR0ze/ars"
+homepage = "https://github.com/phR0ze/mrsa"
+repository = "https://github.com/phR0ze/mrsa"
 
 [profile.release]
 lto = true

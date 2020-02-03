@@ -7,7 +7,7 @@
             "command": [
                 "cargo build --all-features &&",
                 "mkdir -p bin &&",
-                "cp target/debug/ars bin",
+                "cp target/debug/mrsa bin",
             ],
             "group": {
                 "kind": "build",

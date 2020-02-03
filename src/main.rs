@@ -1,11 +1,11 @@
-//! `ars` is ?
+//! `mrsa` is ?
 //!
 //! ## About
 //!
-//! `ars` is ?
-use ars::*;
+//! `mrsa` is ?
 use clap::{App, AppSettings, Arg, SubCommand};
 use fungus::prelude::*;
+use mrsa::*;
 use std::ffi::OsString;
 
 /// CLI provides an abstraction layer for testing the cyberlinux cli
@@ -32,10 +32,10 @@ impl CLI {
 Examples:
 
   # Use and persist the 'base' profile
-  ars use profile base
+  mrsa use profile base
 
   # Use and persist a custom profile '~/foo.yaml'
-  ars use profile ~/foo.yaml
+  mrsa use profile ~/foo.yaml
 ";
 
         // Parse cli args
@@ -53,13 +53,13 @@ Examples:
             .arg(Arg::with_name("loglevel").long("log-level").value_name("NAME").takes_value(true)
                 .help("Sets the log level [error|warn|info|debug|trace] [default: info]"))
 
-            // config-dir - is where ars persists its configuration
+            // config-dir - is where mrsa persists its configuration
             .arg(Arg::with_name("config_dir").long("config-dir").value_name("PATH").takes_value(true)
-                .help("Sets the config directory [default: $XDG_CONFIG_HOME/ars]"))
+                .help("Sets the config directory [default: $XDG_CONFIG_HOME/mrsa]"))
 
             // data-dir - is where all repos are downloaded and all work is done
             .arg(Arg::with_name("data_dir").long("data-dir").value_name("PATH").takes_value(true)
-                .help("Sets the data directory [default: $XDG_DATA_HOME/ars]"))
+                .help("Sets the data directory [default: $XDG_DATA_HOME/mrsa]"))
 
             // Use command
             // -----------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ Examples:
 
             // Remove command
             // -----------------------------------------------------------------------------------------
-            .subcommand(SubCommand::with_name("remove").alias("rm").about("Remove various ars components")
+            .subcommand(SubCommand::with_name("remove").alias("rm").about("Remove various mrsa components")
                 .subcommand(SubCommand::with_name("config").about("Remove the persisted configuration"))
                     .subcommand(SubCommand::with_name("repos").alias("repo").about("Remove indicated locally cloned repos")
                         .arg(Arg::with_name("repos_arg").index(1).required(true).value_names(&["all, aur, boot, config, profiles"])
@@ -82,27 +82,27 @@ Examples:
 
         // Set incoming arguments
         // ---------------------------------------------------------------------------------------------
-        let mut ars = Ars::new();
+        let mut mrsa = Mrsa::new();
         if matches.is_present("loglevel") {
-            ars.loglevel_str(matches.value_of("loglevel").unwrap()); // call loglevel first to let debug override
+            mrsa.loglevel_str(matches.value_of("loglevel").unwrap()); // call loglevel first to let debug override
         }
         if matches.is_present("config_dir") {
-            ars.config_dir(matches.value_of("config_dir").unwrap())?;
+            mrsa.config_dir(matches.value_of("config_dir").unwrap())?;
         }
         if matches.is_present("data_dir") {
-            ars.data_dir(matches.value_of("data_dir").unwrap())?;
+            mrsa.data_dir(matches.value_of("data_dir").unwrap())?;
         }
         if matches.is_present("debug") {
-            ars.debug(matches.value_of("debug").unwrap().to_lowercase().parse()?);
+            mrsa.debug(matches.value_of("debug").unwrap().to_lowercase().parse()?);
         }
         if matches.is_present("quiet") {
-            ars.quiet(matches.value_of("quiet").unwrap().to_lowercase().parse()?);
+            mrsa.quiet(matches.value_of("quiet").unwrap().to_lowercase().parse()?);
         }
         if matches.is_present("test") {
-            ars.test(matches.value_of("test").unwrap().to_lowercase().parse()?);
+            mrsa.test(matches.value_of("test").unwrap().to_lowercase().parse()?);
         }
 
-        // Execute use command before initializing ars to to update config first
+        // Execute use command before initializing mrsa to to update config first
         // ---------------------------------------------------------------------------------------------
         if let Some(ref _matches) = matches.subcommand_matches("use") {
             // Simply print out current persisted configuration
@@ -112,7 +112,7 @@ Examples:
         // Execute remove
         // ---------------------------------------------------------------------------------------------
         if let Some(ref matches) = matches.subcommand_matches("remove") {
-            ars.init()?;
+            mrsa.init()?;
             let mut components = Vec::new();
             match matches.subcommand() {
                 // Remove config
@@ -124,7 +124,7 @@ Examples:
                 _ => unreachable!(),
             }
 
-            ars.remove(components)?;
+            mrsa.remove(components)?;
         }
 
         Ok(Self {})
@@ -152,10 +152,10 @@ fn main() {
 #[cfg(test)]
 mod tests {
     // use fungus::prelude::*;
-    // use ars::*;
+    // use mrsa::*;
 
     #[test]
     fn test_main() {
-        //let ars= Ars::new().unwrap().loglevel(log::Level::Trace).init().unwrap();
+        //let mrsa= Mrsa::new().unwrap().loglevel(log::Level::Trace).init().unwrap();
     }
 }

@@ -5,13 +5,13 @@ use std::rc::Rc;
 
 use crate::model::*;
 
-pub const APP_NAME: &'static str = "ars";
+pub const APP_NAME: &'static str = "mrsa";
 pub const APP_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 pub const APP_DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 
-// Ars implementation
+// Mrsa implementation
 // -------------------------------------------------------------------------------------------------
-pub struct Ars {
+pub struct Mrsa {
     pub(crate) init: bool,
     pub(crate) test: bool,
     pub(crate) test_set: bool,
@@ -29,7 +29,7 @@ pub struct Ars {
     pub(crate) out: Rc<RefCell<dyn io::Write>>,
     config_w: usize, // configuration width to use for output
 }
-impl Default for Ars {
+impl Default for Mrsa {
     fn default() -> Self {
         Self {
             init: Default::default(),
@@ -51,8 +51,8 @@ impl Default for Ars {
         }
     }
 }
-impl Ars {
-    /// Create a new ars instance with defaults.
+impl Mrsa {
+    /// Create a new mrsa instance with defaults.
     pub fn new() -> Self {
         Self { ..Default::default() }
     }
@@ -88,7 +88,7 @@ impl Ars {
         self
     }
 
-    /// Set the config_dir to use `[default: ~/.config/ars]`
+    /// Set the config_dir to use `[default: ~/.config/mrsa]`
     pub fn config_dir<T: AsRef<Path>>(&mut self, path: T) -> Result<&mut Self> {
         self.config_dir_set = true;
         self.config_dir = path.as_ref().abs()?;
@@ -97,7 +97,7 @@ impl Ars {
         Ok(self)
     }
 
-    /// Set the data_dir to use `[default: ~/.local/share/ars]`
+    /// Set the data_dir to use `[default: ~/.local/share/mrsa]`
     pub fn data_dir<T: AsRef<Path>>(&mut self, path: T) -> Result<&mut Self> {
         self.data_dir_set = true;
         self.data_dir = path.as_ref().abs()?;
@@ -122,7 +122,7 @@ impl Ars {
     // Core functions
     // ---------------------------------------------------------------------------------------------
 
-    /// Initialize ars with the configured options
+    /// Initialize mrsa with the configured options
     pub fn init(&mut self) -> Result<()> {
         if self.init {
             return Ok(());
@@ -138,7 +138,7 @@ impl Ars {
         info!("{}", format!("<<{{ {} v{} }}>>", APP_NAME, APP_VERSION).green().bold());
         Logger::flush_buffer();
 
-        // Configure ars
+        // Configure mrsa
         self.load_config()?;
 
         self.init = true;
@@ -146,7 +146,7 @@ impl Ars {
     }
 
     /// Save the current configuration. By default this will be at
-    /// $XDG_CONFIG_HOME/ars/ars.yaml unless overridden.
+    /// $XDG_CONFIG_HOME/mrsa/mrsa.yaml unless overridden.
     pub fn save_config(&self) -> Result<()> {
         info!("{}{}", "Persisting configuration: ".yellow().bold(), self.config_path.cyan()?);
         let config = Config::new();
@@ -190,22 +190,22 @@ impl Ars {
     pub(crate) fn load_config(&mut self) -> Result<()> {
         info!("{}", "Loading configuration".yellow().bold());
 
-        // Config dir by default is $XDG_CONFIG_HOME/ars/ars.yaml
+        // Config dir by default is $XDG_CONFIG_HOME/mrsa/mrsa.yaml
         if !self.config_dir_set {
-            self.config_dir = user::config_dir()?.mash("ars");
+            self.config_dir = user::config_dir()?.mash("mrsa");
             self.config_path = self.config_dir.mash(format!("{}.yaml", APP_NAME));
             info!("{:>w$} {}", "defaulting config_dir:", self.config_dir.cyan()?, w = self.config_w);
         }
 
-        // Data dir by default is $XDG_DATA_HOME/ars
+        // Data dir by default is $XDG_DATA_HOME/mrsa
         if !self.data_dir_set {
-            self.data_dir = user::data_dir()?.mash("ars");
+            self.data_dir = user::data_dir()?.mash("mrsa");
             info!("{:>w$} {}", "defaulting data_dir:", self.data_dir.cyan()?, w = self.config_w);
         }
         Ok(())
     }
 
-    // Implement support for write*! macro varients to use Ars as a Writer.
+    // Implement support for write*! macro varients to use Mrsa as a Writer.
     // We actually don't need to implement the entire fmt::Write trait only this func
     // as macros don't seem to honor the full trait contractd only existance of the func.
     pub fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) {
