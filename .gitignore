@@ -2,6 +2,7 @@
 /target/
 **/*.rs.bk
 /target
+Cargo.lock
 
 # Simple top level location for binary output
 bin/
