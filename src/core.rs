@@ -1,3 +1,11 @@
+// References
+//
+// https://wiki.archlinux.org/index.php/Arch_Build_System
+// https://wiki.archlinux.org/index.php/Arch_Build_System#Retrieve_PKGBUILD_source_using_Git
+// https://www.archlinux.org/pacman/
+// https://git.archlinux.org/pacman.git/tree/
+// https://wiki.archlinux.org/index.php/pacman
+
 use fungus::prelude::*;
 use std::cell::RefCell;
 use std::fmt;
@@ -11,9 +19,9 @@ pub const APP_DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 pub const APP_GIT_COMMIT: &'static str = env!("APP_GIT_COMMIT");
 pub const APP_BUILD_DATE: &'static str = env!("APP_BUILD_DATE");
 
-// Mrsa implementation
+// MRSA implementation
 // -------------------------------------------------------------------------------------------------
-pub struct Mrsa {
+pub struct MRSA {
     pub(crate) init: bool,
     pub(crate) test: bool,
     pub(crate) test_set: bool,
@@ -31,7 +39,7 @@ pub struct Mrsa {
     pub(crate) out: Rc<RefCell<dyn io::Write>>,
     config_w: usize, // configuration width to use for output
 }
-impl Default for Mrsa {
+impl Default for MRSA {
     fn default() -> Self {
         Self {
             init: Default::default(),
@@ -53,7 +61,7 @@ impl Default for Mrsa {
         }
     }
 }
-impl Mrsa {
+impl MRSA {
     /// Create a new mrsa instance with defaults.
     pub fn new() -> Self {
         Self { ..Default::default() }
@@ -156,6 +164,16 @@ impl Mrsa {
         Ok(())
     }
 
+    /// Get package info for the given packages
+    pub fn info<T: AsRef<str>>(&mut self, pkgs: &[T]) -> Result<()> {
+        let pkgstr = pkgs.iter().map(|x| x.as_ref()).collect::<Vec<&str>>().join(", ");
+        info!("{}{}", "View package information for: ".yellow().bold(), pkgstr.cyan());
+        for x in pkgs {
+            println!("{}", x.as_ref());
+        }
+        Ok(())
+    }
+
     /// Remove the given `components`
     pub fn remove<T: AsRef<[Component]>>(&mut self, components: T) -> Result<()> {
         if components.as_ref().iter().any(|x| x == &Component::None) {
@@ -207,7 +225,7 @@ impl Mrsa {
         Ok(())
     }
 
-    // Implement support for write*! macro varients to use Mrsa as a Writer.
+    // Implement support for write*! macro varients to use MRSA as a Writer.
     // We actually don't need to implement the entire fmt::Write trait only this func
     // as macros don't seem to honor the full trait contractd only existance of the func.
     pub fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) {
@@ -222,9 +240,25 @@ mod tests {
     use super::*;
 
     // Test setup
-    fn setup<T: AsRef<Path>>(path: T) -> PathBuf {
+    fn setup<T: AsRef<Path>>(path: T) -> MRSA {
         let temp = PathBuf::from("tests/temp").abs().unwrap();
         sys::mkdir(&temp).unwrap();
-        temp.mash(path.as_ref())
+        let root = temp.mash(path.as_ref());
+        assert!(sys::remove_all(&root).is_ok());
+
+        let mut mrsa = MRSA::new();
+        mrsa.quiet(true);
+        assert!(mrsa.config_dir(&root).is_ok());
+        assert!(mrsa.data_dir(&root).is_ok());
+        assert!(mrsa.init().is_ok());
+        mrsa
+    }
+
+    #[test]
+    fn test_info() {
+        let mut mrsa = setup("core_info");
+
+        assert!(mrsa.info(&["foo", "bar"]).is_ok());
+        assert!(sys::remove_all(&mrsa.data_dir).is_ok());
     }
 }

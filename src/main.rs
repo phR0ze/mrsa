@@ -74,6 +74,14 @@ Examples:
                         .help("Profile name or path to use and persist"))),
             )
 
+            // Sync command
+            // -----------------------------------------------------------------------------------------
+            .subcommand(SubCommand::with_name("sync").about("Synchronization functions").long_about(use_about)
+                .subcommand(SubCommand::with_name("info").about("View package information")
+                    .arg(Arg::with_name("info_args").index(1).required(true).value_names(&["PACKAGE"])
+                        .multiple(true).help("Package name/s to view information about"))),
+            )
+
             // Remove command
             // -----------------------------------------------------------------------------------------
             .subcommand(SubCommand::with_name("remove").alias("rm").about("Remove various mrsa components")
@@ -87,7 +95,7 @@ Examples:
 
         // Set incoming arguments
         // ---------------------------------------------------------------------------------------------
-        let mut mrsa = Mrsa::new();
+        let mut mrsa = MRSA::new();
         if matches.is_present("loglevel") {
             mrsa.loglevel_str(matches.value_of("loglevel").unwrap()); // call loglevel first to let debug override
         }
@@ -117,11 +125,24 @@ Examples:
             println!("{:<w$} {}", "Git Commit:", APP_GIT_COMMIT, w = 18);
         }
 
-        // Execute use command before initializing mrsa to to update config first
+        // Execute use command before initializing to to update config first
         // ---------------------------------------------------------------------------------------------
         if let Some(ref _matches) = matches.subcommand_matches("use") {
             // Simply print out current persisted configuration
             return Err(PathError::parent_not_found("blah").into());
+        }
+
+        // Execute sync
+        // ---------------------------------------------------------------------------------------------
+        if let Some(ref matches) = matches.subcommand_matches("sync") {
+            mrsa.init()?;
+            match matches.subcommand() {
+                ("info", Some(args)) => {
+                    let pkgs = args.values_of_lossy("info_args").unwrap();
+                    mrsa.info(&pkgs)?;
+                }
+                _ => fatal!("No sub-command specified\n{}", matches.usage()),
+            }
         }
 
         // Execute remove
@@ -144,15 +165,15 @@ Examples:
 }
 
 fn main() {
-    std::env::set_var("RUST_BACKTRACE", "1");
+    //std::env::set_var("RUST_BACKTRACE", "1");
     let cli = CLI::new();
     if cli.is_err() {
         let err = cli.unwrap_err();
         if let Some(err) = err.downcast_ref::<clap::Error>() {
             err.exit();
         } else {
-            let fail = err.as_fail();
-            panic!("{:?}", fail);
+            // let fail = err.as_fail();
+            // panic!("{:?}", fail);
             // for cause in fail.iter_causes() {
             //     println!("\nInfo: caused by {}", cause);
             // }
@@ -168,6 +189,6 @@ mod tests {
 
     #[test]
     fn test_main() {
-        //let mrsa= Mrsa::new().unwrap().loglevel(log::Level::Trace).init().unwrap();
+        //let mrsa= MRSA::new().unwrap().loglevel(log::Level::Trace).init().unwrap();
     }
 }
