@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
 description = "Media repository service automation"
-repository = "https://github.com/phR0ze/rivia"
+repository = "https://github.com/phR0ze/mrsa"
 exclude = [
   "docs",
   "config",
