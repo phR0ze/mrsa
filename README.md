@@ -1,2 +1,2 @@
 # mrsa
-Media repository service and automation
+Media repository service automation
