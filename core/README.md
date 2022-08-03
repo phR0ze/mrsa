@@ -1,4 +1,4 @@
-# mrsa
+# mrsa-core
 
 ***Media repository service automation***
 
@@ -29,7 +29,7 @@ or not the change fits with my goals/ideals for the project.
 Enable the git hooks to have the version automatically incremented on commits
 
 ```bash
-cd ~/Projects/mrsa
+cd ~/Projects/mrsa-core
 git config core.hooksPath .githooks
 ```
 
@@ -50,6 +50,14 @@ this project by you, shall be dual licensed as above, without any additional ter
 ---
 
 # Backlog
-* Design API 
+* Design API
+  * Config - Record the watch list
+  * Local file manipulation
+  * Manage(dir...) - Adds directories to the watch list
+    * AddManaged
+    * GetManaged
+    * DelManaged
+  * Tag(file, tag...) - Stored in DB
+  * GetFiles() - Return 
 
 # Changelog

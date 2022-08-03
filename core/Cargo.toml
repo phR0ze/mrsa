@@ -1,18 +1,15 @@
 [package]
-name = "mrsa"
-version = "0.1.3"
+name = "mrsa-core"
+version = "0.1.1"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
 description = "Media repository service automation"
-repository = "https://github.com/phR0ze/mrsa"
+repository = "https://github.com/phR0ze/mrsa/core"
 exclude = [
   "docs",
   "config",
   "examples",
-  ".git",
-  ".githooks",
-  ".github",
   "tests",
   "benches",
   "target",
@@ -30,3 +27,11 @@ strip = true    # Remove all extra info
 opt-level = 0   # Default no optimization
 
 [dependencies]
+rivia-vfs = "0.2"
+
+# Dependencies for examples and tests
+[dev-dependencies]
+macroquad = { git = "https://github.com/phR0ze/macroquad", rev = "2673cbb92ec168b85b025e4fccacdd207e8ace0d"}
+gif = "0.11"
+gif-dispose = "3.1"
+rgb = "0.8"
