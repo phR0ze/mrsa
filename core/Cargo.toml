@@ -1,6 +1,6 @@
 [package]
 name = "mrsa-core"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
@@ -36,3 +36,4 @@ gif = "0.11"
 gif-dispose = "3.1"
 rgb = "0.8"
 image = "0.24"
+lopdf = "0.27"

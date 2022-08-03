@@ -1,7 +1,8 @@
+// Display an animated GIF with macroquad
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
 
-#[macroquad::main("Texture")]
+#[macroquad::main("GIF Animation example")]
 async fn main() {
     let mut animation = Gif::load("examples/assets/ferris.gif".to_string()).await;
     loop {
@@ -53,14 +54,7 @@ impl Gif {
     /// ```
     pub fn from_bytes(file_bytes: &[u8]) -> Gif {
         let (frames, width, height) = Self::decode_gif(&file_bytes);
-        Self {
-            frames,
-            width,
-            height,
-            current_frame: 0,
-            elapsed_time: 0.,
-            paused: false,
-        }
+        Self { frames, width, height, current_frame: 0, elapsed_time: 0., paused: false }
     }
 
     // Use the gif and gif-dispose crates to decode the gif
@@ -105,7 +99,7 @@ impl Gif {
     /// gif_animation.draw_at(42.0, 47.0);
     /// ```
     pub fn draw_at(&self, pos_x: f32, pos_y: f32) {
-        draw_texture_ex(self.frame().texture, pos_x, pos_y, WHITE, DrawTextureParams::default());
+        draw_texture(self.frame().texture, pos_x, pos_y, WHITE);
     }
 
     /// Update method that needs to be called in the loop to advance to next frame

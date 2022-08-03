@@ -1,3 +1,4 @@
+// Display images as thumbnails that fill a 200x200 square
 use image::{imageops::FilterType, DynamicImage};
 use macroquad::prelude::*;
 use rivia_vfs::prelude::*;
@@ -13,6 +14,13 @@ impl Image {
         let bytes = load_file(path).await.expect("Couldn't load file");
         let img = image::load_from_memory(&bytes).unwrap_or_else(|e| panic!("{}", e));
         let texture = Self::texturize(&img);
+
+        // Different filter types yielded comparable results with different times except Nearest
+        // FilterType::Nearest),    // crappy quality
+        // FilterType::Triangle),   // 293 ms
+        // FilterType::CatmullRom), // 449 ms
+        // FilterType::Gaussian),   // 613 ms
+        // FilterType::Lanczos3),   // 607 ms
         let thumbnail = Self::texturize(&img.resize_to_fill(200, 200, FilterType::Triangle));
         Self { path: PathBuf::from(path), image: img, thumbnail, texture }
     }
@@ -26,7 +34,7 @@ impl Image {
     }
 }
 
-#[macroquad::main("WINDOW NAME")]
+#[macroquad::main("Thumbnails Example")]
 async fn main() {
     let font = load_ttf_font("examples/assets/Audiowide-Regular.ttf").await.unwrap();
     let textures = vec![
@@ -49,15 +57,7 @@ async fn main() {
             if col == 1 {
                 x += 5;
             }
-            draw_texture(
-                img.thumbnail,
-                x as f32,
-                y as f32,
-                //screen_width() / 2. - texture.width() / 2.,
-                //screen_height() / 2. - texture.height() / 2.,
-                WHITE,
-            );
-
+            draw_texture(img.thumbnail, x as f32, y as f32, WHITE);
             draw_text_ex(
                 &img.path.ext().unwrap(),
                 x as f32,
