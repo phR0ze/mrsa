@@ -139,15 +139,15 @@ format_code_in_doc_comments = false
 # Possible values: true, false
 format_generated_files = false
 
-# Format the metavariable matching patterns in macros.
-# Default value: false
-# Possible values: true, false
-format_macro_matchers = false
-
 # Format the bodies of macros.
 # Default value: true
 # Possible values: true, false
 format_macro_bodies = true
+
+# Format the metavariable matching patterns in macros.
+# Default value: false
+# Possible values: true, false
+format_macro_matchers = false
 
 # Format string literals where necessary
 # Default value: false
@@ -183,16 +183,16 @@ hide_parse_errors = false
 # Ignore everything below the rustfmt.toml location: ["/"]
 ignore = []
 
-# Indent style of imports
-# Default Value: "Block"
-# Possible values: "Block", "Visual"
-imports_indent = "Block"
-
 # How imports should be grouped into use statements. Imports will be merged or split to the
 # configured level of granularity.
 # Default value: Preserve
 # Possible values: Preserve, Crate, Module, Item, One
 imports_granularity = "Preserve"
+
+# Indent style of imports
+# Default Value: "Block"
+# Possible values: "Block", "Visual"
+imports_indent = "Block"
 
 # Item layout inside a imports block
 # Default value: "Mixed"
@@ -291,6 +291,16 @@ report_fixme = "Never"
 # Possible values: "Always", "Unnumbered", "Never"
 report_todo = "Never"
 
+# Maximum line length for single line if-else expressions. A value of 0 (zero) results in if-else 
+# expressions always being broken into multiple lines. Note this occurs when use_small_heuristics is 
+# set to Off.
+# Default value: 50
+# Possible values: any positive integer that is less than or equal to the value specified for max_width
+# Stable: Yes
+# By default this option is set as a percentage of max_width provided by use_small_heuristics, but a 
+# value set directly for single_line_if_else_max_width will take precedence.
+single_line_if_else_max_width = 110
+
 # Don't reformat out of line modules
 # Default value: false
 # Possible values: true, false
@@ -321,11 +331,26 @@ struct_field_align_threshold = 0
 # Possible values: true, false
 struct_lit_single_line = true
 
-struct_lit_width = 18
+# Maximum width in the body of a struct literal before falling back to vertical formatting. A value 
+# of 0 (zero) results in struct literals always being broken into multiple lines. Note this occurs 
+# when use_small_heuristics is set to Off.
+# Default value: 18
+# Possible values: any positive integer that is less than or equal to the value specified for max_width
+# Stable: Yes
+# By default this option is set as a percentage of max_width provided by use_small_heuristics, but a 
+# value set directly for struct_lit_width will take precedence.
+#struct_lit_width = 18
 
-struct_variant_width = 35
-
-single_line_if_else_max_width = 110
+# Maximum width in the body of a struct variant before falling back to vertical formatting. A value 
+# of 0 (zero) results in struct literals always being broken into multiple lines. Note this occurs 
+# when use_small_heuristics is set to Off.
+# Default value: 35
+# Possible values: any positive integer that is less than or equal to the value specified for 
+# max_width
+# Stable: Yes
+# By default this option is set as a percentage of max_width provided by use_small_heuristics, but a 
+# value set directly for struct_variant_width will take precedence.
+#struct_variant_width = 35
 
 # Number of spaces per tab
 # Default value: 4

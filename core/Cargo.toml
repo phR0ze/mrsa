@@ -1,6 +1,6 @@
 [package]
 name = "mrsa-core"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
@@ -31,7 +31,8 @@ rivia-vfs = "0.2"
 
 # Dependencies for examples and tests
 [dev-dependencies]
-macroquad = { git = "https://github.com/phR0ze/macroquad", rev = "2673cbb92ec168b85b025e4fccacdd207e8ace0d"}
+macroquad = "0.3"
 gif = "0.11"
 gif-dispose = "3.1"
 rgb = "0.8"
+image = "0.24"
