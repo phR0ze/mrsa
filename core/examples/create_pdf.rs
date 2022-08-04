@@ -2,8 +2,15 @@
 extern crate lopdf;
 use lopdf::content::{Content, Operation};
 use lopdf::{Document, Object, Stream};
+use macroquad::prelude::*;
 
-fn main() {
+#[macroquad::main("Text Image Example")]
+async fn main()
+{
+    let bytes = load_file("examples/assets/example.txt").await.expect("Couldn't load file");
+    let data = std::str::from_utf8(&bytes).unwrap();
+    println!("{}", data);
+
     let mut doc = Document::with_version("1.5");
     let pages_id = doc.new_object_id();
     let font_id = doc.add_object(dictionary! {
