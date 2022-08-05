@@ -10,3 +10,4 @@ Cargo.lock
 **/*.rs.bk
 
 core/target
+core/test.png
