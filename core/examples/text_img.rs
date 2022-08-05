@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use image::{imageops::colorops, ImageBuffer, Pixel, Rgb, RgbImage, Rgba, RgbaImage};
+use image::{ImageBuffer, Rgb, RgbImage};
 use imageproc::drawing::{draw_text_mut, text_size};
 use macroquad::prelude::*;
 use rusttype::{Font, Scale};
@@ -26,7 +26,7 @@ impl TextImage {
         let font = Font::try_from_vec(font).unwrap();
         let font_scale = Scale { x: font_size, y: font_size };
         let (w, h) = (screen_width() as u32, screen_height() as u32);
-        let mut image = RgbImage::from_pixel(w, h, Rgb([255u8, 255u8, 255u8]));
+        let image = RgbImage::from_pixel(w, h, Rgb([255u8, 255u8, 255u8]));
         Self {
             image,
             font,
@@ -43,78 +43,85 @@ impl TextImage {
     // Load the given file and write it to the text image
     pub async fn load_file(&mut self, path: &str) {
         let bytes = load_file(path).await.expect("Couldn't load file");
-        let mut chars = std::str::from_utf8(&bytes).unwrap().chars().peekable();
+        let mut chars = std::str::from_utf8(&bytes).unwrap().chars();
 
         // Write text to the image
-        let (w, _h) = (screen_width(), screen_height());
-        let mut line = String::new();
         let mut word = String::new();
-        let mut partial_word = String::new();
-        while let Some(mut char) = chars.next() {
+        while let Some(char) = chars.next() {
             match char {
-                // Handle windows line endings
-                '\r' => {
-                    if chars.peek().is_some() {
-                        char = chars.next().unwrap();
-                        self.newline();
+                // Handle line endings
+                '\r' | '\n' => {
+                    if char == '\r' {
+                        chars.next();
                     }
+                    if !self.write(&word) {
+                        self.writeln();
+                    }
+                    word.clear();
                 },
+
                 // Replace tabs with 4 spaces
-                '\t' => line.push_str("    "),
+                '\t' => self.line.push_str("    "),
 
-                // Ignore newlines
-                '\n' => {},
-
-                // Split words on spaces
+                // Write out word to image
                 ' ' => {
-                    partial_word.push(' ');
-                    word = partial_word.clone();
-                    partial_word.clear();
+                    self.write(&word);
+                    word.clear();
                 },
 
-                // All other chars add add to word
-                _ => partial_word.push(char),
-            }
-
-            // Determine how much realestate the text will require
-            let w1 = self.text_width(&line) as f32;
-            let mut w2 = 0.;
-            let chunk2 = line.clone() + &word;
-            if !word.is_empty() {
-                w2 = self.text_width(&chunk2) as f32;
-            }
-
-            // Write a line out once max size is hit or no more text is available
-            if w1 > w - self.margin * 2. || char == '\n' || chars.peek().is_none() {
-                self.write(&line);
-                self.y += self.font_size as i32;
-                line.clear();
+                // Append to word
+                _ => word.push(char),
             }
         }
 
-        let _ = self.image.save(Path::new("test.png")).unwrap();
+        // Final flush
+        self.write(&word);
+
+        self.image.save(Path::new("test.png")).unwrap();
     }
 
-    // Write the given value to the image
-    pub fn write(&mut self, value: &str) {
-        draw_text_mut(&mut self.image, self.font_color, self.x, self.y, self.font_scale, &self.font, value);
-        self.line.push_str(value);
+    // Intelligently write the value to the image spacing and wrapping as needed.
+    // * if nothing is given nothing is written
+    // * queues data until a line is filled before writing
+    // * returns true if the line was wrote out to the image
+    fn write(&mut self, value: &str) -> bool {
+        let mut flushed = false;
+        if !value.is_empty() {
+            // Inject extra char to account for size of space joining pieces.
+            // Using a char other than a space as the space seems to get trimmed off.
+            let value_w = self.text_width(&("*".to_string() + value));
+            let line_w = self.text_width(&self.line);
+            if line_w + value_w > self.image.width() as i32 - self.margin * 2 {
+                self.writeln();
+                flushed = true;
+            }
+            self.line.push(' ');
+            self.line.push_str(value);
+        }
+        flushed
     }
 
-    // Simulate a newline by moving y down a line
-    pub fn newline(&mut self) {
-        self.y += self.font_size as i32;
-    }
-
-    // Intelligently wrap as needed while writing out the given value
-    pub fn write_wrap(&mut self, value: &str) {
-        let chunk = self.line.clone() + value;
-        if self.text_width(&self.line) > self.image.width() as i32 - self.margin {
-            self.newline();
+    // Write out the internal line to the image and advance to the newline
+    fn writeln(&mut self) {
+        if !self.line.is_empty() {
+            draw_text_mut(
+                &mut self.image,
+                self.font_color,
+                self.x,
+                self.y,
+                self.font_scale,
+                &self.font,
+                &self.line,
+            );
             self.line.clear();
-            self.write(value);
         }
-        self.newline()
+        self.newline();
+    }
+
+    // Simulate a newline by moving y down a line and resetting x
+    fn newline(&mut self) {
+        self.y += self.font_size as i32;
+        self.x = self.margin;
     }
 
     // Calculate the width of the given text based on font and scale
