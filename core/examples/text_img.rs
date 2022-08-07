@@ -1,6 +1,4 @@
-use std::path::Path;
-
-use image::{DynamicImage, ImageBuffer, Rgba, RgbaImage};
+use image::{ImageBuffer, Rgba, RgbaImage};
 use imageproc::drawing::{draw_text_mut, text_size};
 use macroquad::prelude::*;
 use rusttype::{Font, Scale};
@@ -12,10 +10,12 @@ pub struct TextImage
     font_size: f32,                        // Font size to use for text
     font_scale: Scale,                     // Font scale to use for text
     font_color: Rgba<u8>,                  // Font color to use for text
-    margin: i32,                           // Margin around page
+    margin: u32,                           // Margin around page
+    top_margin: Option<u32>,               // Margin for the top of the page
     line: String,                          // Current line already wrote out
     x: i32,                                // Current x location to write to
     y: i32,                                // Current y location to write to
+    tx: Option<Texture2D>,                 // Cached texture to save conversion cost
 }
 
 impl TextImage
@@ -36,10 +36,45 @@ impl TextImage
             font_scale,
             font_color: Rgba([0u8, 0u8, 0u8, 255u8]),
             margin,
+            top_margin: None,
             line: String::new(),
-            x: margin,
-            y: margin,
+            x: margin as i32,
+            y: margin as i32,
+            tx: None,
         }
+    }
+
+    // Set the font option
+    pub async fn font(mut self, path: &str) -> Self
+    {
+        let bytes = load_file(path).await.expect("Couldn't load font file");
+        self.font = Font::try_from_vec(bytes).unwrap();
+        self
+    }
+
+    // Set the font_size option
+    pub fn font_size(mut self, value: f32) -> Self
+    {
+        self.font_size = value;
+        self.font_scale = Scale { x: value, y: value };
+        self
+    }
+
+    // Set the margin option
+    pub fn margin(mut self, value: u32) -> Self
+    {
+        self.margin = value;
+        self.x = value as i32;
+        self.y = value as i32;
+        self
+    }
+
+    // Se the top margin option
+    pub fn top_margin(mut self, value: u32) -> Self
+    {
+        self.top_margin = Some(value);
+        self.y = value as i32;
+        self
     }
 
     // Load the given file and write it to the text image
@@ -83,6 +118,21 @@ impl TextImage
         // self.image.save(Path::new("test.png")).unwrap();
     }
 
+    // Draw the image on the screen using macroquad
+    pub fn draw(&mut self, x: f32, y: f32)
+    {
+        let tx = self.as_texture();
+        draw_texture(tx, x, y, WHITE);
+    }
+
+    // Draw the image on the center of the screen using macroquad
+    pub fn draw_center(&mut self)
+    {
+        let tx = self.as_texture();
+        let (x, y) = (screen_width() / 2. - tx.width() / 2., screen_height() / 2. - tx.height() / 2.);
+        draw_texture(tx, x, y, WHITE);
+    }
+
     // Get the width of the image
     pub fn width(&self) -> u32
     {
@@ -96,10 +146,13 @@ impl TextImage
     }
 
     // Convert the image into a texture
-    pub fn as_texture(&self) -> Texture2D
+    pub fn as_texture(&mut self) -> Texture2D
     {
-        let (w, h) = self.image.dimensions();
-        Texture2D::from_rgba8(w as u16, h as u16, &self.image.as_raw())
+        if self.tx.is_none() {
+            let (w, h) = self.image.dimensions();
+            self.tx = Some(Texture2D::from_rgba8(w as u16, h as u16, &self.image.as_raw()))
+        }
+        self.tx.unwrap()
     }
 
     // Intelligently write the value to the image spacing and wrapping as needed.
@@ -114,7 +167,7 @@ impl TextImage
             // Using a char other than a space as the space seems to get trimmed off.
             let value_w = self.text_width(&("*".to_string() + value));
             let line_w = self.text_width(&self.line);
-            if line_w + value_w > self.image.width() as i32 - self.margin * 2 {
+            if line_w + value_w > self.image.width() as i32 - self.margin as i32 * 2 {
                 self.writeln();
                 flushed = true;
             }
@@ -146,7 +199,7 @@ impl TextImage
     fn newline(&mut self)
     {
         self.y += self.font_size as i32;
-        self.x = self.margin;
+        self.x = self.margin as i32;
     }
 
     // Calculate the width of the given text based on font and scale
@@ -173,17 +226,15 @@ fn window_conf() -> Conf
 #[macroquad::main(window_conf)]
 async fn main()
 {
-    let mut img = TextImage::new(screen_width() as u32, screen_height() as u32);
+    let mut img =
+        TextImage::new(screen_width() as u32, screen_height() as u32).margin(20).top_margin(30).font_size(24.);
     img.load_file("examples/assets/example.txt").await;
 
     loop {
         clear_background(WHITE);
 
-        // Center texture on the screen
-        let tx = img.as_texture();
-        let (x, y) = (screen_width() / 2. - tx.width() / 2., screen_height() / 2. - tx.height() / 2.);
+        img.draw_center();
 
-        draw_texture(tx, x, y, WHITE);
         next_frame().await
     }
 }
