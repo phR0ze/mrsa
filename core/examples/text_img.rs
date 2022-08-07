@@ -92,9 +92,8 @@ impl TextImage
                     if char == '\r' {
                         chars.next();
                     }
-                    if !self.write(&word) {
-                        self.writeln();
-                    }
+                    self.write(&word);
+                    self.writeln();
                     word.clear();
                 },
 
@@ -158,10 +157,8 @@ impl TextImage
     // Intelligently write the value to the image spacing and wrapping as needed.
     // * if nothing is given nothing is written
     // * queues data until a line is filled before writing
-    // * returns true if the line was wrote out to the image
-    fn write(&mut self, value: &str) -> bool
+    fn write(&mut self, value: &str)
     {
-        let mut flushed = false;
         if !value.is_empty() {
             // Inject extra char to account for size of space joining pieces.
             // Using a char other than a space as the space seems to get trimmed off.
@@ -169,12 +166,10 @@ impl TextImage
             let line_w = self.text_width(&self.line);
             if line_w + value_w > self.image.width() as i32 - self.margin as i32 * 2 {
                 self.writeln();
-                flushed = true;
             }
             self.line.push(' ');
             self.line.push_str(value);
         }
-        flushed
     }
 
     // Write out the internal line to the image and advance to the newline
@@ -226,8 +221,12 @@ fn window_conf() -> Conf
 #[macroquad::main(window_conf)]
 async fn main()
 {
-    let mut img =
-        TextImage::new(screen_width() as u32, screen_height() as u32).margin(20).top_margin(30).font_size(24.);
+    let mut img = TextImage::new(screen_width() as u32, screen_height() as u32)
+        .margin(20)
+        .top_margin(30)
+        .font_size(24.)
+        .font("examples/assets/Roboto-Regular.ttf")
+        .await;
     img.load_file("examples/assets/example.txt").await;
 
     loop {
