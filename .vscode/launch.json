@@ -7,38 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'wmctl'",
+            "name": "Debug executable 'mrsa'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=wmctl",
-                    "--package=wmctl"
+                    "--bin=mrsa",
+                    "--package=mrsa"
                 ],
                 "filter": {
-                    "name": "wmctl",
-                    "kind": "bin"
-                }
-            },
-            "args": [
-                "-d",
-                "shape",
-                "max"
-            ],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in executable 'wmctl'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=wmctl",
-                    "--package=wmctl"
-                ],
-                "filter": {
-                    "name": "wmctl",
+                    "name": "mrsa",
                     "kind": "bin"
                 }
             },
@@ -48,17 +25,17 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'libwmctl'",
+            "name": "Debug unit tests in executable 'mrsa'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--lib",
-                    "--package=libwmctl"
+                    "--bin=mrsa",
+                    "--package=mrsa"
                 ],
                 "filter": {
-                    "name": "libwmctl",
-                    "kind": "lib"
+                    "name": "mrsa",
+                    "kind": "bin"
                 }
             },
             "args": [],

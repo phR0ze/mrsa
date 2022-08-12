@@ -4,6 +4,7 @@
 //! ```
 //! use mrsa_core::prelude::*;
 //! ```
+pub mod image;
 
 /// All essential symbols in a simple consumable form
 ///
@@ -11,7 +12,9 @@
 /// ```
 /// use mrsa_core::prelude::*;
 /// ```
-pub mod prelude {}
+pub mod prelude {
+    pub use crate::image::*;
+}
 
 #[cfg(test)]
 mod tests {

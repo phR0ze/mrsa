@@ -36,7 +36,7 @@ impl Image {
 
 #[macroquad::main("Thumbnails Example")]
 async fn main() {
-    let font = load_ttf_font("examples/assets/Audiowide-Regular.ttf").await.unwrap();
+    let font = load_ttf_font("assets/fonts/Audiowide-Regular.ttf").await.unwrap();
     let textures = vec![
         Image::load("examples/assets/ferris.gif").await,
         Image::load("examples/assets/ferris.jpg").await,

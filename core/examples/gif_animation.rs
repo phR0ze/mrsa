@@ -2,22 +2,6 @@
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
 
-#[macroquad::main("GIF Animation example")]
-async fn main() {
-    let mut animation = Gif::load("examples/assets/ferris.gif".to_string()).await;
-    loop {
-        if is_key_pressed(KeyCode::Space) {
-            animation.toggle_paused();
-        }
-
-        clear_background(WHITE);
-        animation.draw();
-        animation.tick();
-
-        next_frame().await
-    }
-}
-
 /// A single frame in the animation
 #[derive(Debug)]
 pub struct Frame {
@@ -134,5 +118,21 @@ impl Gif {
     fn advance_frame(&mut self) {
         self.current_frame = if self.current_frame == self.frames.len() - 1 { 0 } else { self.current_frame + 1 };
         self.elapsed_time = 0.0;
+    }
+}
+
+#[macroquad::main("GIF Animation example")]
+async fn main() {
+    let mut animation = Gif::load("examples/assets/ferris.gif".to_string()).await;
+    loop {
+        if is_key_pressed(KeyCode::Space) {
+            animation.toggle_paused();
+        }
+
+        clear_background(WHITE);
+        animation.draw();
+        animation.tick();
+
+        next_frame().await
     }
 }

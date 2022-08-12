@@ -1,6 +1,6 @@
 [package]
 name = "mrsa-core"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
@@ -28,9 +28,6 @@ opt-level = 0   # Default no optimization
 
 [dependencies]
 rivia-vfs = "0.2"
-
-# Dependencies for examples and tests
-[dev-dependencies]
 macroquad = "0.3"
 gif = "0.11"
 gif-dispose = "3.1"
@@ -39,3 +36,6 @@ image = "0.24"
 lopdf = "0.27"
 imageproc = "0.23"
 rusttype = "0.9"
+
+# Dependencies for examples and tests
+[dev-dependencies]

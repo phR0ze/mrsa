@@ -1,6 +1,6 @@
 [package]
 name = "mrsa"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
@@ -30,3 +30,5 @@ strip = true    # Remove all extra info
 opt-level = 0   # Default no optimization
 
 [dependencies]
+mrsa-core = { path = "core" }
+macroquad = "0.3"
