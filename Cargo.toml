@@ -1,6 +1,6 @@
 [package]
 name = "mrsa"
-version = "0.1.9"
+version = "0.1.10"
 edition = "2021"
 authors = ["phR0ze"]
 license = "MIT OR Apache-2.0"
@@ -19,7 +19,22 @@ exclude = [
   ".vscode"
 ]
 
-# Higher the opt-level value the slower the compile time
+[workspace]
+members = [ "core" ]
+
+[dependencies]
+mrsa-core = { path = "core" }
+macroquad = { path = "../macroquad" }
+egui = "0.19.0"
+egui-macroquad = { path = "../egui-macroquad" }
+
+[package.metadata.android]
+android_version = 29
+target_sdk_version = 26
+min_sdk_version = 26
+build_targets = [ "i686-linux-android" ]
+#build_targets = [ "armv7-linux-androideabi", "aarch64-linux-android", "i686-linux-android", "x86_64-linux-android" ]
+
 [profile.release]
 opt-level = 3   # Optimize for speed over size
 lto = true      # Futher assist in optimization
@@ -28,7 +43,3 @@ strip = true    # Remove all extra info
 
 [profile.dev]
 opt-level = 0   # Default no optimization
-
-[dependencies]
-mrsa-core = { path = "core" }
-macroquad = "0.3"
