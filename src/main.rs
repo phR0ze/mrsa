@@ -1,4 +1,4 @@
-use macroquad::prelude::*;
+use macroquad::{prelude::*, ui::root_ui};
 use mrsa_core::prelude::*;
 
 // Configure window
@@ -22,6 +22,10 @@ async fn main() {
         // img.draw_center();
         let (x, y) = (screen_width() / 2., screen_height() / 2.);
         draw_text("IT WORKS!", x, y, 50.0, DARKGRAY);
+        root_ui().label(None, "hello: ");
+        if root_ui().button(None, "Start") {
+            println!("pushed");
+        }
 
         egui_macroquad::ui(|egui_ctx| {
             egui::Window::new("egui ❤ macroquad").show(egui_ctx, |ui| {

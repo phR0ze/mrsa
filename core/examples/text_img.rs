@@ -1,3 +1,4 @@
+// Display a text file as an image in macroquad
 use macroquad::prelude::*;
 use mrsa_core::prelude::*;
 
